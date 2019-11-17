@@ -1,16 +1,20 @@
 <template>
   <div id="app">
-    <my-header />
+    <my-header/>
+    <tab/>
+    <router-view/>
   </div>
 </template>
 
 <script>
 import MyHeader from '@comps/header/header'
+import Tab from '@comps/tab/tab'
 
 export default {
   name: 'app',
   components: {
-    MyHeader
+    MyHeader,
+    Tab,
   }
 }
 </script>
@@ -19,5 +23,5 @@ export default {
 @import "common/stylus/variable";
 
 #app
-  color: $color-theme
+  // color: $color-theme
 </style>
