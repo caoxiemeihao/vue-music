@@ -22,7 +22,7 @@
 
 <script>
 import Slider from '@base/slider/slider'
-import { getRecommend } from '@api/recommend'
+import { getRecommend, getDiscList } from '@api/recommend'
 import { ERR_OK } from '@api/config'
 
 export default {
@@ -37,14 +37,21 @@ export default {
   },
   created() {
     this._getRedommend()
+    this._getDiscList()
   },
   methods: {
     async _getRedommend() {
       const [err, res] = await getRecommend()
-      if (res.code === ERR_OK) {
+      if (!err && res.code === ERR_OK) {
         this.recommends = res.data.slider
       }
-    }
+    },
+    async _getDiscList() {
+      const [err, res] = await getDiscList()
+      if (!err && res.code === ERR_OK) {
+        console.log(res.data.list)
+      }
+    },
   }
 }
 </script>
