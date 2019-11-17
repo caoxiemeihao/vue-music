@@ -1,26 +1,37 @@
 <template>
-  <div class="recommend">
-    <div class="recommend-content">
-      <div v-if="recommends.length" class="slider-wrapper">
-        <slider>
-          <div v-for="(item, idx) of recommends" :key="idx">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl" alt="">
-            </a>
-          </div>
-        </slider>
+  <div class="recommend" :data="discList">
+    <scroll ref="scroll" class="recommend-content">
+      <div>
+        <div v-if="recommends.length" class="slider-wrapper">
+          <slider>
+            <div v-for="(item, idx) of recommends" :key="idx">
+              <a :href="item.linkUrl">
+                <img :src="item.picUrl" alt="">
+              </a>
+            </div>
+          </slider>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li v-for="(item, idx) of discList" :key="idx" class="item">
+              <div class="icon">
+                <img @load="loadImage" :src="item.imgurl" width="60" height="60" alt="">
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul>
-
-        </ul>
-      </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
 <script>
+import Scroll from '@base/scroll/scroll'
 import Slider from '@base/slider/slider'
 import { getRecommend, getDiscList } from '@api/recommend'
 import { ERR_OK } from '@api/config'
@@ -29,11 +40,13 @@ export default {
   name: 'recommend',
   data() {
     return {
-      recommends: []
+      recommends: [],
+      discList: [],
     }
   },
   components: {
-    Slider
+    Slider,
+    Scroll,
   },
   created() {
     this._getRedommend()
@@ -49,9 +62,15 @@ export default {
     async _getDiscList() {
       const [err, res] = await getDiscList()
       if (!err && res.code === ERR_OK) {
-        console.log(res.data.list)
+        this.discList = res.data.list
       }
     },
+    loadImage() {
+      if (!this.checkLoaded) {
+        this.$refs.Scroll.refresh()
+        this.checkLoaded = true
+      }
+    }
   }
 }
 </script>
