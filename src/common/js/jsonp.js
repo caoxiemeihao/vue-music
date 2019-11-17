@@ -5,9 +5,9 @@ export default function jsonp(url, data, option) {
   return new Promise(resolve => {
     originJSONP(url, option, (err, data) => {
       if (err) {
-        resolve([null, data])
-      } else {
         resolve([err, null])
+      } else {
+        resolve([null, data])
       }
     })
   })
@@ -16,7 +16,7 @@ export default function jsonp(url, data, option) {
 function paramProcessor(data) {
   let url = ''
   Object.keys(data).forEach(k => {
-    const val = data[k] || ''
+    const val = data[k] !== undefined ? data[k] : ''
     url += `&${k}=${encodeURIComponent(val)}`
   })
   return url ? url.substring(1) : ''
