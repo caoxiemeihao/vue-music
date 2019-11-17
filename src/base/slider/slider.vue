@@ -40,7 +40,7 @@ export default {
     }
   },
   methods: {
-    _setSliderWidth() {
+    _setSliderWidth(isResize) {
       this.children = this.$refs.sliderGroup.children
 
       let width = 0
@@ -51,7 +51,7 @@ export default {
         width += sliderWidth
       })
 
-      if (this.loop) {
+      if (this.loop && !isResize) {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'
@@ -75,7 +75,7 @@ export default {
             }
           }
         },
-        click: true,
+        // click: true,
       })
       
       this.slider.on('scrollEnd', () => {
@@ -93,6 +93,9 @@ export default {
       }, this.interval)
     }
   },
+  destroyed() {
+    clearTimeout(this.timer)
+  },
   mounted() {
     setTimeout(() => {
       this._setSliderWidth()
@@ -103,6 +106,14 @@ export default {
         this._play()
       }
     }, 20)
+
+    window.addEventListener('resize', () => {
+      if (!this.slider) {
+        return
+      }
+      this._setSliderWidth(true)
+      this.slider.refresh()
+    })
   }
 }
 </script>
