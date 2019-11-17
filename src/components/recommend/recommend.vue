@@ -72,7 +72,7 @@ export default {
     },
     loadImage() {
       if (!this.checkLoaded) {
-        this.$refs.Scroll.refresh()
+        this.$refs.scroll.refresh()
         this.checkLoaded = true
       }
     }
