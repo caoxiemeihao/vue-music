@@ -1,5 +1,11 @@
 <template>
-  <scroll class="listview" :data="list" ref="listview">
+  <scroll
+    class="listview"
+    :data="list"
+    :listenScroll="listenScroll"
+    ref="listview"
+    :probeType="probeType"
+    @scroll="scroll">
     <ul>
       <li v-for="(group, idx1) of list" class="list-group" :key="idx1" ref="listgroup">
         <h2 class="list-group-title">{{group.title}}</h2>
@@ -18,7 +24,8 @@
           v-for="(item, idx) of shortcutList"
           class="item"
           :key="idx"
-          :index="idx">
+          :index="idx"
+          :class="{current: currentIndex===idx}">
           {{item}}
         </li>
       </ul>
@@ -35,11 +42,20 @@ const ANCHOR_HEIGHT = 18
 export default {
   created() {
     this.touch = {}
+    this.listenScroll = true
+    this.listHeight = []
+    this.probeType = 3
   },
   props: {
     list: {
       type: Array,
-      default: () => []
+      default: null
+    }
+  },
+  data() {
+    return {
+      scrollY: -1,
+      currentIndex: 0
     }
   },
   components: {
@@ -64,8 +80,55 @@ export default {
       const anchorIndex = this.touch.anchorIndex + delta
       this._scrollTo(anchorIndex)
     },
+    scroll(pos) {
+      this.scrollY = pos.y
+    },
     _scrollTo(index) {
+      if (!index && index !== 0) {
+        // 上下边界处理
+        return
+      }
+      if (index < 0) {
+        index = 0
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
+      this.scrollY = -this.listHeight[index]
       this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 0)
+    },
+    _calculateHeight() {
+      this.listHeight = []
+      const list = this.$refs.listgroup
+      let height = 0
+      this.listHeight.push(height)
+      Array.from(list).forEach((item) => {
+        height += item.clientHeight
+        this.listHeight.push(height)
+      })
+    }
+  },
+  watch: {
+    list() {
+      setTimeout(() => {
+        this._calculateHeight()
+      }, 20)
+    },
+    scrollY(newY) {
+      if (newY > 0) {
+        // 顶部边界
+        this.currentIndex = 0
+        return
+      }
+      for (let i = 0; i < this.listHeight.length - 1; i++) {
+        const height1 = this.listHeight[i]
+        const height2 = this.listHeight[i + 1]
+        if (-newY >= height1 && -newY < height2) {
+          this.currentIndex = i
+          return
+        }
+      }
+      // 底部边界
+      this.currentIndex = this.listHeight.length - 2
     }
   }
 }
