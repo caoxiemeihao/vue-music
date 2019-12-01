@@ -10,7 +10,7 @@
       <li v-for="(group, idx1) of list" class="list-group" :key="idx1" ref="listgroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="(item, idx2) of group.items" :key="`${idx1}-${idx2}`">
+          <li @click="selectItem(item)" class="list-group-item" v-for="(item, idx2) of group.items" :key="`${idx1}-${idx2}`">
             <img v-lazy="item.avatar" class="avatar" alt="" />
             <span class="name">{{item.name}}</span>
           </li>
@@ -85,6 +85,9 @@ export default {
     }
   },
   methods: {
+    selectItem(item) {
+      this.$emit('select', item)
+    },
     onShortcut(ev) {
       const el = ev.target;
       const index = +getData(el, 'index')
