@@ -8,10 +8,16 @@
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from '@api/singer'
 import { ERR_OK } from '@api/config'
+import { createSong } from '@common/js/song'
 
 export default {
   created() {
     this._getDetail()
+  },
+  data() {
+    return {
+      songs: []
+    }
   },
   computed: {
     ...mapGetters([
@@ -25,8 +31,18 @@ export default {
       }
       const [err, res] = await getSingerDetail(this.singer.id)
       if (!err && res.code === ERR_OK) {
-        console.log(res.data.list)
+        this.songs = this._normalizeSongs(res.data.list)
+        console.log(this.songs)
       }
+    },
+    _normalizeSongs(list) {
+      return list.map(({ musicData }) => {
+        let song = null
+        if (musicData.songid && musicData.albummid) {
+          song = createSong(musicData) 
+        }
+        return song
+      }).filter(_ => _)
     }
   }
 }
