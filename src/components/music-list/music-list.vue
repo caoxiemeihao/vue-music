@@ -104,8 +104,8 @@ export default {
     },
     handlePlaylist(playlist) {
       const bottom = playlist.lenght > 0 ? '60px' : ''
-      this.$refs.list.$el.style.bottom = bottom
-      this.$refs.list.refresh()
+      this.$refs.scroll.$el.style.bottom = bottom
+      this.$refs.scroll.refresh()
     },
   },
   watch: {
