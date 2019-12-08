@@ -1,3 +1,7 @@
+import { getLyric } from '@api/song'
+import { ERR_OK } from '@api/config'
+import { Base64 } from 'js-base64'
+
 export default class Song {
   constructor({
     id,
@@ -17,6 +21,21 @@ export default class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+
+  async getLyric() {
+    if (this.lyric) {
+      return [null, this.lyric]
+    }
+    const res = await getLyric(this.mid)
+    if (res.retcode === ERR_OK) {
+      this.lyric = Base64.decode(res.lyric)
+      // eslint-disable-next-line
+      console.log(this.lyric)
+      return [null, this.lyric]
+    } else {
+      return [res]
+    }
   }
 }
 

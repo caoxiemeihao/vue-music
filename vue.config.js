@@ -27,7 +27,20 @@ module.exports = {
             host: 'https://c.y.qq.com',
           }
         },
-        pathRewrite: { '/api/getDiscList': '' }// pathRewrite 来重写地址，将前缀 '/api/getDiscList' 转为 '/'。
+        pathRewrite: { '/api/getDiscList': '' } // pathRewrite 来重写地址，将前缀 '/api/getDiscList' 转为 '/'。
+      },
+      '/api/lyric': {
+        target: 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg',
+        secure: false,
+        changeOrigin: true,
+        bypass: function(req, res, proxyOptions) {
+          req.headers = {
+            ...req.headers,
+            referer: 'https://c.y.qq.com',
+            host: 'c.y.qq.com',
+          }
+        },
+        pathRewrite: { '/api/lyric': '' }
       }
     }
   },
